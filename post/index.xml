@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Bruce Dawson</title>
+    <link>https://www.bruce.audio/post/</link>
+    <description>Recent content in Posts on Bruce Dawson</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 23 Apr 2022 21:03:02 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How&#39;d we get here?</title>
+      <link>https://www.bruce.audio/post/helloworld/</link>
+      <pubDate>Sat, 23 Apr 2022 21:03:02 -0700</pubDate>
+      
+      <guid>https://www.bruce.audio/post/helloworld/</guid>
+      <description>&lt;p&gt;How&amp;rsquo;d we get here, what&amp;rsquo;s the plan, and where have I been?&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

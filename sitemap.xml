@@ -8,16 +8,25 @@
     <loc>https://www.bruce.audio/</loc>
     <lastmod>2022-04-23T21:03:02-07:00</lastmod>
   </url><url>
-    <loc>https://www.bruce.audio/posts/helloworld/</loc>
+    <loc>https://www.bruce.audio/tags/hello-world/</loc>
     <lastmod>2022-04-23T21:03:02-07:00</lastmod>
   </url><url>
-    <loc>https://www.bruce.audio/posts/</loc>
+    <loc>https://www.bruce.audio/post/helloworld/</loc>
+    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/life/</loc>
+    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/post/</loc>
+    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/</loc>
     <lastmod>2022-04-23T21:03:02-07:00</lastmod>
   </url><url>
     <loc>https://www.bruce.audio/categories/</loc>
   </url><url>
-    <loc>https://www.bruce.audio/series/</loc>
+    <loc>https://www.bruce.audio/tags/index/</loc>
   </url><url>
-    <loc>https://www.bruce.audio/tags/</loc>
+    <loc>https://www.bruce.audio/series/</loc>
   </url>
 </urlset>

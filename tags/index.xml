@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Bruce Dawson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Apr 2022 21:03:02 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>audio</title>
+      <link>https://www.bruce.audio/tags/audio/</link>
+      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/audio/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>signal processing</title>
+      <link>https://www.bruce.audio/tags/signal-processing/</link>
+      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/signal-processing/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>hello world</title>
       <link>https://www.bruce.audio/tags/hello-world/</link>
@@ -22,6 +40,42 @@
       <pubDate>Sat, 23 Apr 2022 21:03:02 -0700</pubDate>
       
       <guid>https://www.bruce.audio/tags/life/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>css</title>
+      <link>https://www.bruce.audio/tags/css/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/css/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>html</title>
+      <link>https://www.bruce.audio/tags/html/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/html/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>markdown</title>
+      <link>https://www.bruce.audio/tags/markdown/</link>
+      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/markdown/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>text</title>
+      <link>https://www.bruce.audio/tags/text/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.bruce.audio/tags/text/</guid>
       <description></description>
     </item>
     

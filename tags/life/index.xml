@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>life on Bruce Dawson</title>
+    <title>Life on Bruce Dawson</title>
     <link>https://www.bruce.audio/tags/life/</link>
-    <description>Recent content in life on Bruce Dawson</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Life on Bruce Dawson</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Apr 2022 21:03:02 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/tags/life/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 23 Apr 2022 21:03:02 -0700</lastBuildDate>
+    <atom:link href="https://www.bruce.audio/tags/life/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>How&#39;d we get here?</title>
       <link>https://www.bruce.audio/post/2022/04/23/howd_we_get_here/</link>
       <pubDate>Sat, 23 Apr 2022 21:03:02 -0700</pubDate>
-      
       <guid>https://www.bruce.audio/post/2022/04/23/howd_we_get_here/</guid>
       <description>&lt;p&gt;How&amp;rsquo;d we get here, what&amp;rsquo;s the plan, and where have I been?&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

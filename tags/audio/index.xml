@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>audio on Bruce Dawson</title>
+    <title>Audio on Bruce Dawson</title>
     <link>https://www.bruce.audio/tags/audio/</link>
-    <description>Recent content in audio on Bruce Dawson</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Audio on Bruce Dawson</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/tags/audio/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate>
+    <atom:link href="https://www.bruce.audio/tags/audio/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Adventures in Dithering</title>
       <link>https://www.bruce.audio/post/2022/05/26/dithering/</link>
       <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
-      
       <guid>https://www.bruce.audio/post/2022/05/26/dithering/</guid>
       <description>&lt;p&gt;Recently I had an opportunity to dive into the noisy world of dithering.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

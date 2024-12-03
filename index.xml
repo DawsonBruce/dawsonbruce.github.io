@@ -25,15 +25,15 @@
 &lt;p&gt;&lt;em&gt;&lt;strong&gt;Note&lt;/strong&gt;: the example images in this post are displayed using a &lt;a href=&#34;https://en.wikipedia.org/wiki/Spectrogram&#34;&gt;spectrogram&lt;/a&gt; which displays the frequency content of an audio source. The &amp;lsquo;Y&amp;rsquo; axis of the image is frequency whereas the &amp;lsquo;X&amp;rsquo; axis is time.&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&#34;how-is-dithering-implemented&#34;&gt;How is Dithering Implemented?&lt;/h2&gt;
 &lt;p&gt;Audio signals can be digitally represented as either an integer value within a &lt;a href=&#34;https://en.wikipedia.org/wiki/Audio_bit_depth&#34;&gt;signed bit range&lt;/a&gt;, or as a floating-point value. In my case, I was dealing with floating-point values that I had to scale to their signed bit range value before adding noise to the audio signal. The number of possible integer values in the signed bit range can be calculated as:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;2 ^ bitrate
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;2 ^ bitrate
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;with a range of:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;bit = 2 ^ bitrate - 1
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;bit = 2 ^ bitrate - 1
 
 range = { -bit , bit - 1 }
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In the case of 16-bit bitrate, the possible number of integer values is &lt;strong&gt;65,536&lt;/strong&gt; with a range of &lt;strong&gt;-32,768 to 32,767&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Next, floating point noise is added to the audio signal in it&amp;rsquo;s signed bit representation, resulting in modulation of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Bit_numbering&#34;&gt;Least Significant Bit&lt;/a&gt;, adding noise to the &lt;a href=&#34;https://en.wikipedia.org/wiki/Noise_floor&#34;&gt;noise floor&lt;/a&gt;, eliminating quantization errors at the cost of a nearly imperceivable addition to the noise floor of the audio signal.&lt;/p&gt;
 &lt;p&gt;TPDF dithering involves the following calculation:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;// range of &#39;rand&#39; is { -1.0, 1.0 }
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// range of &amp;#39;rand&amp;#39; is { -1.0, 1.0 }
 (rand * rand) / N
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;which multiplies N number of random values in the floating-point signal range (-1.0 to 1.0), divided by N.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Example of TPDF (silent audio source):&lt;/strong&gt;&lt;/p&gt;
@@ -43,7 +43,7 @@ range = { -bit , bit - 1 }
 
 
 &lt;p&gt;However, noise-shaped TPDF Dithering takes a slightly different approach by tracking the previous random value and subtracting it from the current random value &amp;ndash; this creates a &amp;ldquo;shaped,&amp;rdquo; effect which reduces the amount of noise distributed to the &lt;a href=&#34;https://en.wikipedia.org/wiki/Frequency_band&#34;&gt;middle frequency bands&lt;/a&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;rand = ( rand - previous_rand )
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;rand = ( rand - previous_rand )
 previous_rand = rand
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Example of noise-shaped dithering (silent audio source):&lt;/strong&gt;&lt;/p&gt;
 

@@ -2,11 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://www.bruce.audio/about/</loc>
-    <lastmod>2022-04-25T00:00:00+00:00</lastmod>
+    <loc>https://www.bruce.audio/post/2022/05/26/dithering/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/audio/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
   </url><url>
     <loc>https://www.bruce.audio/</loc>
-    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/index/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/post/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/signal-processing/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/tags/</loc>
+    <lastmod>2022-05-21T19:21:03-07:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/project/</loc>
+    <lastmod>2022-05-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.bruce.audio/about/</loc>
+    <lastmod>2022-04-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.bruce.audio/tags/hello-world/</loc>
     <lastmod>2022-04-23T21:03:02-07:00</lastmod>
@@ -17,15 +38,7 @@
     <loc>https://www.bruce.audio/tags/life/</loc>
     <lastmod>2022-04-23T21:03:02-07:00</lastmod>
   </url><url>
-    <loc>https://www.bruce.audio/post/</loc>
-    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
-  </url><url>
-    <loc>https://www.bruce.audio/tags/</loc>
-    <lastmod>2022-04-23T21:03:02-07:00</lastmod>
-  </url><url>
     <loc>https://www.bruce.audio/categories/</loc>
-  </url><url>
-    <loc>https://www.bruce.audio/tags/index/</loc>
   </url><url>
     <loc>https://www.bruce.audio/series/</loc>
   </url>

@@ -6,7 +6,84 @@
     <description>Recent posts from on Bruce Dawson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Apr 2022 21:03:02 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adventures in Dithering</title>
+      <link>https://www.bruce.audio/post/2022/05/26/dithering/</link>
+      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
+      
+      <guid>https://www.bruce.audio/post/2022/05/26/dithering/</guid>
+      <description>&lt;p&gt;Recently I had an opportunity to dive into the noisy world of dithering.&lt;/p&gt;
+&lt;h2 id=&#34;what-is-dithering&#34;&gt;What is Dithering?&lt;/h2&gt;
+&lt;p&gt;According to &lt;a href=&#34;https://en.wikipedia.org/wiki/Dither&#34;&gt;Wikipedia&lt;/a&gt;, &amp;ldquo;dither is an intentionally applied form of noise used to randomize quantization error, preventing large-scale patterns such as color banding in images.&amp;rdquo; In the case of signal processing as pertains to audio, these patterns emerge as spectral &lt;a href=&#34;https://en.wikipedia.org/wiki/Artifact_(error)&#34;&gt;artifacts&lt;/a&gt;, producing audible frequency content not found in the original audio source. Also according to Wikipedia, the word &amp;ldquo;dither&amp;rdquo; comes from the middle english verb &amp;ldquo;didderen,&amp;rdquo; meaning, &amp;ldquo;to tremble.&amp;rdquo; Dithering is the curious case where adding noise or &amp;ldquo;tremble,&amp;rdquo; to a signal provides more information &amp;ndash; what a concept!&lt;/p&gt;
+&lt;p&gt;Earlier this year I was tasked with implementing a dithering algorithm at
+&lt;a href=&#34;https://output.com&#34;&gt;Output&lt;/a&gt;, which is an algorithm I had yet to previously implement. In software engineering, it seems to me that common problems arise and there&amp;rsquo;s typically tried-and-true methods for solving these problems. In the case of dithering, this is also true, as there&amp;rsquo;s a number of decent dithering algorithms available in closed-source software such as &lt;a href=&#34;https://www.izotope.com/en/products/rx.html&#34;&gt;Izotope RX&lt;/a&gt;, or &lt;a href=&#34;https://www.ableton.com/en/&#34;&gt;Ableton Live&lt;/a&gt;, some of which I had difficulty finding information about online. Thanks to organizations such as &lt;a href=&#34;https://www.airwindows.com&#34;&gt;Airwindows&lt;/a&gt; and &lt;a href=&#34;https://www.audacityteam.org&#34;&gt;Audacity&lt;/a&gt;, there are some open-source implementations available which allowed me to observe how some of these algorithms, such as how &lt;a href=&#34;https://en.wikipedia.org/wiki/Triangular_distribution&#34;&gt;Triangular Probability Density Function (TPDF)&lt;/a&gt; dithering had been implemented by others.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h2 id=&#34;why-dithering&#34;&gt;Why Dithering?&lt;/h2&gt;
+&lt;p&gt;Computers use what is known as an &lt;a href=&#34;https://en.wikipedia.org/wiki/Analog-to-digital_converter&#34;&gt;Analog-to-Digital Conversion (ADC)&lt;/a&gt; process to convert analog audio signals to it&amp;rsquo;s digital representation using what is known as the &lt;a href=&#34;http://www.dspguide.com/ch3/2.htm&#34;&gt;Sampling Theorem&lt;/a&gt;. A sample is a slice of a continuous audio signal, and samples are played in sequence at &lt;a href=&#34;https://www.izotope.com/en/learn/digital-audio-basics-sample-rate-and-bit-depth.html&#34;&gt;sample rate&lt;/a&gt; to form an audible signal. When sampled correctly, a continuous signal can be exactly reconstructed using its sampled equivalent. When sampling is performed incorrectly, such as when the frequency of the analog signal is greater than the &lt;a href=&#34;Sampling&#34; title=&#34;signal processing&#34;&gt;Nyquist frequency&lt;/a&gt; (one-half of the sampling rate), aliasing occurs where the frequency of the sampled data differs from the frequency of the original signal. Aliasing corrupts the sampled information causing the reconstruction of the original signal to be impossible.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Note&lt;/strong&gt;: the example images in this post are displayed using a &lt;a href=&#34;https://en.wikipedia.org/wiki/Spectrogram&#34;&gt;spectrogram&lt;/a&gt; which displays the frequency content of an audio source. The &amp;lsquo;Y&amp;rsquo; axis of the image is frequency whereas the &amp;lsquo;X&amp;rsquo; axis is time.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;how-is-dithering-implemented&#34;&gt;How is Dithering Implemented?&lt;/h2&gt;
+&lt;p&gt;Audio signals can be digitally represented as either an integer value within a &lt;a href=&#34;https://en.wikipedia.org/wiki/Audio_bit_depth&#34;&gt;signed bit range&lt;/a&gt;, or as a floating-point value. In my case, I was dealing with floating-point values that I had to scale to their signed bit range value before adding noise to the audio signal. The number of possible integer values in the signed bit range can be calculated as:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;2 ^ bitrate
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;with a range of:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;bit = 2 ^ bitrate - 1
+
+range = { -bit , bit - 1 }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In the case of 16-bit bitrate, the possible number of integer values is &lt;strong&gt;65,536&lt;/strong&gt; with a range of &lt;strong&gt;-32,768 to 32,767&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Next, floating point noise is added to the audio signal in it&amp;rsquo;s signed bit representation, resulting in modulation of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Bit_numbering&#34;&gt;Least Significant Bit&lt;/a&gt;, adding noise to the &lt;a href=&#34;https://en.wikipedia.org/wiki/Noise_floor&#34;&gt;noise floor&lt;/a&gt;, eliminating quantization errors at the cost of a nearly imperceivable addition to the noise floor of the audio signal.&lt;/p&gt;
+&lt;p&gt;TPDF dithering involves the following calculation:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// range of &amp;#39;rand&amp;#39; is { -1.0, 1.0 }
+(rand * rand) / N
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;which multiplies N number of random values in the floating-point signal range (-1.0 to 1.0), divided by N.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example of TPDF (silent audio source):&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;img src=&#34;images/dither_tpdf.png&#34; width=&#34;100%&#34;/&gt;
+
+
+&lt;p&gt;However, noise-shaped TPDF Dithering takes a slightly different approach by tracking the previous random value and subtracting it from the current random value &amp;ndash; this creates a &amp;ldquo;shaped,&amp;rdquo; effect which reduces the amount of noise distributed to the &lt;a href=&#34;https://en.wikipedia.org/wiki/Frequency_band&#34;&gt;middle frequency bands&lt;/a&gt;.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;rand = ( rand - previous_rand )
+previous_rand = rand
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Example of noise-shaped dithering (silent audio source):&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;img src=&#34;images/dither_shaped_tpdf.png&#34; width=&#34;100%&#34;/&gt;
+
+
+&lt;p&gt;While either dithering type is an acceptable choice, I have a preference for
+noise-shaped dithering as it eliminates some noise in the mid-frequency band.
+Other types of dithering such as Ableton Live&amp;rsquo;s &lt;strong&gt;POW-r&lt;/strong&gt; algorithm I have yet to explore, namely because I had difficulty finding information about these algorithms online. If you have experience implementing other types of dithering I&amp;rsquo;d love to &lt;a href=&#34;mailto:hi@bruce.audio?subject=Dithering&#34;&gt;hear your experience&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;the-results&#34;&gt;The Results&lt;/h2&gt;
+&lt;p&gt;The difference between the dithered and non-dithered downsampled audio is evident when analyzed using a spectrogram. In the images below, the second example (no dithering) contains spectral artifacts on the right-hand side of the image, whereas the third image contains noise but no artifacts. The noise signal we&amp;rsquo;ve added to our audio source safely negates quantization errors by replacing the silence with noise while being virtually imperceivable.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Original audio file:&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;img src=&#34;images/dither_original.png&#34; width=&#34;100%&#34;/&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Downsampled audio file without dithering (notice the artifacts):&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;img src=&#34;images/dither_no_dither.png&#34; width=&#34;100%&#34;/&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Downsampled audio file with dithering (no artifacts):&lt;/strong&gt;&lt;/p&gt;
+
+
+&lt;img src=&#34;images/dither_with_dither.png&#34; width=&#34;100%&#34;/&gt;
+
+
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;The exploration of dithering was an exciting and challenging experience that aided me in growing a bit further in my skillset as an audio software engineer. While the implementation process wasn&amp;rsquo;t as seamless as I had hoped due to some issues with low frequency content I had added to the signal in my initial attempts as a result of my incorrect calculations, this exploration helped me demystify the concept of dithering and further clarify my understanding of signal processing as pertains to audio bit depth, signed integer ranges, and bit modulation. I hope this blog post helps any reader that may be currently implementing their own dithering algorithm, may be curious as to how dithering works, or is simply interested in the work that I am doing.&lt;/p&gt;
+&lt;p&gt;Thanks for reading. Until next time, friends.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;</description>
+    </item>
+    
     <item>
       <title>How&#39;d we get here?</title>
       <link>https://www.bruce.audio/post/2022/04/23/howd_we_get_here/</link>

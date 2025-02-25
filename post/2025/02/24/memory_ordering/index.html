@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+        <title>Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire | Bruce Dawson</title>
+        <meta name="description" content="Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire">
+        <meta property="og:site_name" content="Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire" />
+        <meta property="og:title" content="Bruce Dawson" />
+        <meta property="og:description" content="Thread synchronization is a fundamental challenge in real-time audio processing.
+"/>
+        <meta property="og:image" content="https://www.bruce.audio/img/bruce_cropped.png" />
+				<meta name="keywords" content=""/>
+    
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <meta name="keywords" content="music technology, audio programming, DSP engineer, audio engineering, software developer">
+    <link rel="icon" type="image/svg" href='https://www.bruce.audio/img/logo.png'/>
+    <meta name="author" content='bruce_dawson'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.139.3">
+    
+    <link rel="stylesheet" href="https://www.bruce.audio/sass/main.min.a669fc379ca0ba4d389af69be2682407e7bca16d368f2e7ad5b83c0cd80029b3.css" type="text/css" media="screen" >
+
+    <link rel="stylesheet" href="https://www.bruce.audio/css/style.css">
+
+    
+
+    
+    </head>
+
+<body>
+      <div class="line" id="scrollIndicator"></div>
+      <div class="main"><div class="title">
+  <div class="name">
+    <h2><a href="https://www.bruce.audio/"
+	   style="text-decoration: none; color: inherit;">Bruce Dawson</a></h2>
+  </div>
+  <div class="color-scheme">
+    <input type="checkbox" class="checkbox" id="chk" />
+    <label class="label" for="chk">
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="moon" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"></path></svg>
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sun" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 160c-52.9 0-96 43.1-96
+										96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"></path></svg>
+      <div class="ball"></div>
+    </label>
+  </div>
+</div>
+<script>
+  const themeSetter = (theme) => {
+      document.body.classList.toggle('dark')
+      localStorage.setItem('theme', theme)
+      blockSwitcher()
+  }
+
+  const blockSwitcher = () => [...document.getElementsByTagName("BLOCKQUOTE")]
+	.forEach(b => b.classList.toggle('dark'))
+
+  const styleSwapper = () => {
+      document.body.classList.add('back-transition')
+      if (localStorage.getItem('theme') === 'dark') themeSetter('light')
+      else if (localStorage.getItem('theme') === 'light') themeSetter('dark')
+  }
+
+  if (localStorage.getItem('theme') === 'dark'){
+      themeSetter('dark')
+      document.addEventListener("DOMContentLoaded", blockSwitcher)
+  }
+ else localStorage.setItem('theme', 'light')
+
+  document.getElementById('chk').addEventListener('change',styleSwapper);
+
+  window.addEventListener("scroll", () => {
+      let height = document.documentElement.scrollHeight
+          - document.documentElement.clientHeight;
+      if(height >= 500){
+	  let winScroll = document.body.scrollTop
+              || document.documentElement.scrollTop;
+	  let scrolled = (winScroll / height) * 100;
+	  document.getElementById("scrollIndicator").style.width = scrolled + "%";
+      }
+  });
+</script>
+
+<section class="intro">
+  
+  <div class="post-header">
+    <a class="go-back" href="https://www.bruce.audio/"><svg aria-hidden="true" focusable="false" data-prefix="far" class="back-icon" data-icon="caret-square-left" height="25px" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M272 157.1v197.8c0 10.7-13 16.1-20.5 8.5l-98.3-98.9c-4.7-4.7-4.7-12.2 0-16.9l98.3-98.9c7.5-7.7 20.5-2.3 20.5 8.4zM448 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h352c26.5 0 48 21.5 48 48zm-48 346V86c0-3.3-2.7-6-6-6H54c-3.3 0-6 2.7-6 6v340c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"></path></svg> </a>
+    <h2 class="post-title">Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire</h2>
+</div>
+
+<p class="post-dets">Published on: February 24, 2025
+  | Reading Time: 5 min | Last Modified: February 24, 2025
+  <br>
+</p>
+<span class="tags">
+  
+  <h5><a class="tag" href='https://www.bruce.audio/tags/audio'>audio</a></h5>
+  
+  <h5><a class="tag" href='https://www.bruce.audio/tags/C&#43;&#43;'>C&#43;&#43;</a></h5>
+  
+  <h5><a class="tag" href='https://www.bruce.audio/tags/concurrency'>concurrency</a></h5>
+  
+</span>
+
+<div class="content">
+  <p>Thread synchronization is a fundamental challenge in real-time audio processing.</p>
+<h1 id="efficient-real-time-synchronization-in-audio-processing-with-stdmemory_order_release-and-stdmemory_order_acquire">Efficient Real-Time Synchronization in Audio Processing with <code>std::memory_order_release</code> and <code>std::memory_order_acquire</code></h1>
+<p>Thread synchronization is a fundamental challenge in real-time audio processing. While traditional locking mechanisms such as <a href="https://en.cppreference.com/w/cpp/thread/mutex">mutexes</a> provide a straightforward approach to managing shared state, they introduce unacceptable overhead in real-time audio threads. Blocking operations, such as memory allocations introduced by the use of a mutex on a high-priority processing thread can lead to <a href="https://www.geeksforgeeks.org/priority-inversion-what-the-heck/">priority inversion</a>, latency spikes, and audio dropouts.</p>
+<p>One method of addressing C++ thread synchronization in real-time processing involves using <code>std::atomic</code> data structures. Atomics are a lightweight mechanism for data synchronization, however correct usage of memory ordering remains a common point of confusion among software engineers. While the default memory ordering behavior of <code>std::atomic</code> is <code>std::memory_order_seq_cst</code> (sequental consistency), which easiest to understand, it also imposes unnecessary performance costs which can be avoided. More efficient synchronization can be achieved with <code>std::memory_order_release</code> and <code>std::memory_order_acquire</code>, yet many developers are unfamiliar with how these memory orderings work in practice.</p>
+<h5 id="this-blog-post-explores">This blog post explores:</h5>
+<ul>
+<li>Why mutexes are unsuitable for real-time audio.</li>
+<li>How <code>std::memory_order_release</code> and <code>std::memory_order_acquire</code> ensure safe, lock-free synchronization.</li>
+<li>Practical example of applying these concepts to real-time parameter updates in an audio engine.</li>
+</ul>
+<h3 id="the-mutex">The Mutex</h3>
+<p><code>std::mutex</code> is an excellent <a href="https://cplusplus.com/reference/cstdlib/">stdlib</a> object for guaranteeing thread synchronization between shared data. Used in conjunction with RAII-based containers like <code>std::lock_guard</code>, stdlib offers built-in mechanisms for guaranteeing <a href="https://en.cppreference.com/w/cpp/thread/lock_guard">mutual exclusion</a>. While a mutex is held, no other thread can acquire the mutex until the original holder of the mutex has released its acquisition of the object, guaranteeing that only one thread modifies a resource at a time.</p>
+<h5 id="we-keep-mutexes-out-of-the-real-time-audio-processing-thread-for-a-few-reasons">We keep mutexes out of the real-time audio processing thread for a few reasons:</h5>
+<ol>
+<li>Mutexes can block the audio thread when attempting to lock a mutex that is already held by another thread.</li>
+<li>Unpredictable performance issues can occur as a result of priority inversion if a lower priority thread holds a lock that the real-time processing thread needs</li>
+<li>Mutexes introduce non-deterministic latency as a result of thread contention and scheduling, which is unacceptable for the strict timing guaranteeings of real-time audio processing.</li>
+</ol>
+<h3 id="atomic-memory-ordering">Atomic Memory Ordering</h3>
+<p><code>std::memory_order_acquire/release</code> is a mechanism that allows us to tell the compiler to synchronize reads and writes happening on an atomic object utilizing these flags, while foregoing the overhead of global memory ordering (which is provided to us with the default memory ordering flag <code>std::memory_order_seq_cst</code>).</p>
+<p><code>std::memory_order_seq_cst</code> assumes a sequentially consistent memory ordering. For folks that may not know, threading was introduced to the C++ library via C++11. Before C++11, all C++ applications were assumed to be read from top-to-bottom, assuming a sequentially consistent ordering.</p>
+<p>Nowadays, the default behavior of <code>std::memory_order_seq_cst</code> does provide a guaranteed memory order, which will guarantee the same value is read and written by concurrent atomic load and atomic store operations. For the sake of real-time audio processing, which needs to be non-blocking and blazingly fast, we can utilize the <code>std:memory_order_acquire/release</code> mechanism to guarantee concurrent reads and writes produce and consume the same value, which is incredibly important for processing real-time parameter updates which are expected to happen accurately and consistently. Let&rsquo;s take a look at an example:</p>
+<h3 id="a-concise-example">A Concise Example</h3>
+<pre tabindex="0"><code>#include &lt;atomic&gt;
+
+// Shared atomic parameter
+std::atomic&lt;float&gt; gain {1.f};
+
+// Control thread: Updating the gain value
+void updateGain(float newGain) 
+{
+    gain.store(newGain, std::memory_order_release);
+}
+
+// Audio thread: Reading the gain safely
+float processAudio() 
+{
+    return gain.load(std::memory_order_acquire); // Always sees the latest update
+}
+</code></pre><p>In the example above, we have a function <code>updateGain(float)</code> which is expected to be called from our user interface. The user interface exists on a different thread than our high-priority real-time processing thread. Our real-time processing thread calls <code>processAudio()</code> which reads the value of our <code>std::atomic&lt;float&gt; gain</code> variable. Because the real-time thread is happening <em>very quickly</em>, it&rsquo;s likely that <code>gain.load()</code> and <code>gain.store()</code> will be called concurrently. By utilizing <code>std::memory_order_release</code> while calling <code>gain.store()</code>, and <code>std::memory_order_acquire</code> while calling <code>updateGain()</code> from the user interface, our application will guarantee that the value seen by the <code>load()</code> operation is the same value provided to the <code>store()</code> operation. Modern compilers may offer ordering guarantees by way of the default memory ordering flag, but at the added cost of the overhead of the global memory order (all <em>all</em> atomics being synchronized).</p>
+<p>It is also worth mentioning that alternate memory ordering options exist such as <code>std::memory_order_relaxed</code> which offers <em>no</em> guarantees of concurrency between atomics reads and writes (only atomicity is guaranteed), <code>std::memory_order_acq_rel</code> which combines acquire and release semantics into a single operation for atomic read-modify-write operations such as variants of <code>std::atomic::fetch()</code> and <code>std::atomic::exchange()</code>.</p>
+<h3 id="in-closing">In Closing</h3>
+<p>By utilizing <code>std::memory_order_release</code> and <code>std::memory_order_acquire</code>, developers can ensure safe, low-latency data synchronization between threads without the unnecessary synchronization overhead of the default memory ordering flag <code>std:memory_order_seq_cst</code>. The <code>std::memory_order_release</code> and <code>std::memory_order_acquire</code> memory orderings allow for efficient one-way data transfer, ensuring that atomic values being read and written concurrently read the same value being stored.</p>
+<p>Understanding and applying the right memory ordering strategy can make a significant impact on the performance of our real-time processes. By incorporating the strategy described in this article, developers can improve performance without sacrificing correctness, guaranteeing non-blocking high performance multi-threaded audio processing code.</p>
+<h4 id="additional-links">Additional Links</h4>
+<p><a href="https://en.cppreference.com/w/cpp/atomic/memory_order">https://en.cppreference.com/w/cpp/atomic/memory_order</a>
+<a href="https://www.sobyte.net/post/2022-06/cpp-memory-order/">https://www.sobyte.net/post/2022-06/cpp-memory-order/</a>
+<a href="https://leanpub.com/concurrencywithmodernc">https://leanpub.com/concurrencywithmodernc</a></p>
+</div>
+
+</section>
+<footer id="footer">
+    <strong></strong>
+    <div class="social">
+        &nbsp; <a href="https://github.com/DawsonBruce" target="_blank" rel="noopener" title="Github"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a> &nbsp;&nbsp; <a href="https://www.linkedin.com/in/bruce-dawson-75019a165/" target="_blank" rel="noopener" title="Linkedin"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a> &nbsp;&nbsp; <a href="mailto:hi@bruce.audio" target="_blank" rel="noopener" title="Email"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a> &nbsp;
+    </div><strong></strong>
+    <p style="color:grey;">© <script>document.write( new Date().getFullYear() );</script> Bruce Dawson.  <a href="https://creativecommons.org/licenses/by/4.0/">Some rights reserved</a>.</p>
+</footer>
+</div>
+    </body>
+</html>

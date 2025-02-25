@@ -6,19 +6,33 @@
     <description>Recent content in Tags on Bruce Dawson</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 24 Feb 2025 22:20:13 -0800</lastBuildDate>
     <atom:link href="https://www.bruce.audio/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Audio</title>
       <link>https://www.bruce.audio/tags/audio/</link>
-      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
       <guid>https://www.bruce.audio/tags/audio/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>C&#43;&#43;</title>
+      <link>https://www.bruce.audio/tags/c&#43;&#43;/</link>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
+      <guid>https://www.bruce.audio/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Concurrency</title>
+      <link>https://www.bruce.audio/tags/concurrency/</link>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
+      <guid>https://www.bruce.audio/tags/concurrency/</guid>
       <description></description>
     </item>
     <item>
       <title>Index</title>
       <link>https://www.bruce.audio/tags/index/</link>
-      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
       <guid>https://www.bruce.audio/tags/index/</guid>
       <description></description>
     </item>

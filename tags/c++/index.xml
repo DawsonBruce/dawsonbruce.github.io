@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Audio on Bruce Dawson</title>
-    <link>https://www.bruce.audio/tags/audio/</link>
-    <description>Recent content in Audio on Bruce Dawson</description>
+    <title>C&#43;&#43; on Bruce Dawson</title>
+    <link>https://www.bruce.audio/tags/c&#43;&#43;/</link>
+    <description>Recent content in C&#43;&#43; on Bruce Dawson</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 24 Feb 2025 22:20:13 -0800</lastBuildDate>
-    <atom:link href="https://www.bruce.audio/tags/audio/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.bruce.audio/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire</title>
       <link>https://www.bruce.audio/post/2025/02/24/memory_ordering/</link>
       <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
       <guid>https://www.bruce.audio/post/2025/02/24/memory_ordering/</guid>
       <description>&lt;p&gt;Thread synchronization is a fundamental challenge in real-time audio processing.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Adventures in Dithering</title>
-      <link>https://www.bruce.audio/post/2022/05/26/dithering/</link>
-      <pubDate>Sat, 21 May 2022 19:21:03 -0700</pubDate>
-      <guid>https://www.bruce.audio/post/2022/05/26/dithering/</guid>
-      <description>&lt;p&gt;Recently I had an opportunity to dive into the noisy world of dithering.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

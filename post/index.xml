@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Bruce Dawson</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 24 Feb 2025 22:20:13 -0800</lastBuildDate>
     <atom:link href="https://www.bruce.audio/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire</title>
+      <link>https://www.bruce.audio/post/2025/02/24/memory_ordering/</link>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
+      <guid>https://www.bruce.audio/post/2025/02/24/memory_ordering/</guid>
+      <description>&lt;p&gt;Thread synchronization is a fundamental challenge in real-time audio processing.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Adventures in Dithering</title>
       <link>https://www.bruce.audio/post/2022/05/26/dithering/</link>

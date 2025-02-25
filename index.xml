@@ -6,7 +6,63 @@
     <description>Recent posts from on Bruce Dawson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 May 2022 19:21:03 -0700</lastBuildDate><atom:link href="https://www.bruce.audio/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 Feb 2025 22:20:13 -0800</lastBuildDate><atom:link href="https://www.bruce.audio/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Efficient Real-Time Synchronization in Audio Processing with std::memory_order_release and std::memory_order_acquire</title>
+      <link>https://www.bruce.audio/post/2025/02/24/memory_ordering/</link>
+      <pubDate>Mon, 24 Feb 2025 22:20:13 -0800</pubDate>
+      
+      <guid>https://www.bruce.audio/post/2025/02/24/memory_ordering/</guid>
+      <description>&lt;p&gt;Thread synchronization is a fundamental challenge in real-time audio processing.&lt;/p&gt;
+&lt;h1 id=&#34;efficient-real-time-synchronization-in-audio-processing-with-stdmemory_order_release-and-stdmemory_order_acquire&#34;&gt;Efficient Real-Time Synchronization in Audio Processing with &lt;code&gt;std::memory_order_release&lt;/code&gt; and &lt;code&gt;std::memory_order_acquire&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Thread synchronization is a fundamental challenge in real-time audio processing. While traditional locking mechanisms such as &lt;a href=&#34;https://en.cppreference.com/w/cpp/thread/mutex&#34;&gt;mutexes&lt;/a&gt; provide a straightforward approach to managing shared state, they introduce unacceptable overhead in real-time audio threads. Blocking operations, such as memory allocations introduced by the use of a mutex on a high-priority processing thread can lead to &lt;a href=&#34;https://www.geeksforgeeks.org/priority-inversion-what-the-heck/&#34;&gt;priority inversion&lt;/a&gt;, latency spikes, and audio dropouts.&lt;/p&gt;
+&lt;p&gt;One method of addressing C++ thread synchronization in real-time processing involves using &lt;code&gt;std::atomic&lt;/code&gt; data structures. Atomics are a lightweight mechanism for data synchronization, however correct usage of memory ordering remains a common point of confusion among software engineers. While the default memory ordering behavior of &lt;code&gt;std::atomic&lt;/code&gt; is &lt;code&gt;std::memory_order_seq_cst&lt;/code&gt; (sequental consistency), which easiest to understand, it also imposes unnecessary performance costs which can be avoided. More efficient synchronization can be achieved with &lt;code&gt;std::memory_order_release&lt;/code&gt; and &lt;code&gt;std::memory_order_acquire&lt;/code&gt;, yet many developers are unfamiliar with how these memory orderings work in practice.&lt;/p&gt;
+&lt;h5 id=&#34;this-blog-post-explores&#34;&gt;This blog post explores:&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Why mutexes are unsuitable for real-time audio.&lt;/li&gt;
+&lt;li&gt;How &lt;code&gt;std::memory_order_release&lt;/code&gt; and &lt;code&gt;std::memory_order_acquire&lt;/code&gt; ensure safe, lock-free synchronization.&lt;/li&gt;
+&lt;li&gt;Practical example of applying these concepts to real-time parameter updates in an audio engine.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;the-mutex&#34;&gt;The Mutex&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;std::mutex&lt;/code&gt; is an excellent &lt;a href=&#34;https://cplusplus.com/reference/cstdlib/&#34;&gt;stdlib&lt;/a&gt; object for guaranteeing thread synchronization between shared data. Used in conjunction with RAII-based containers like &lt;code&gt;std::lock_guard&lt;/code&gt;, stdlib offers built-in mechanisms for guaranteeing &lt;a href=&#34;https://en.cppreference.com/w/cpp/thread/lock_guard&#34;&gt;mutual exclusion&lt;/a&gt;. While a mutex is held, no other thread can acquire the mutex until the original holder of the mutex has released its acquisition of the object, guaranteeing that only one thread modifies a resource at a time.&lt;/p&gt;
+&lt;h5 id=&#34;we-keep-mutexes-out-of-the-real-time-audio-processing-thread-for-a-few-reasons&#34;&gt;We keep mutexes out of the real-time audio processing thread for a few reasons:&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;Mutexes can block the audio thread when attempting to lock a mutex that is already held by another thread.&lt;/li&gt;
+&lt;li&gt;Unpredictable performance issues can occur as a result of priority inversion if a lower priority thread holds a lock that the real-time processing thread needs&lt;/li&gt;
+&lt;li&gt;Mutexes introduce non-deterministic latency as a result of thread contention and scheduling, which is unacceptable for the strict timing guaranteeings of real-time audio processing.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;atomic-memory-ordering&#34;&gt;Atomic Memory Ordering&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;std::memory_order_acquire/release&lt;/code&gt; is a mechanism that allows us to tell the compiler to synchronize reads and writes happening on an atomic object utilizing these flags, while foregoing the overhead of global memory ordering (which is provided to us with the default memory ordering flag &lt;code&gt;std::memory_order_seq_cst&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;std::memory_order_seq_cst&lt;/code&gt; assumes a sequentially consistent memory ordering. For folks that may not know, threading was introduced to the C++ library via C++11. Before C++11, all C++ applications were assumed to be read from top-to-bottom, assuming a sequentially consistent ordering.&lt;/p&gt;
+&lt;p&gt;Nowadays, the default behavior of &lt;code&gt;std::memory_order_seq_cst&lt;/code&gt; does provide a guaranteed memory order, which will guarantee the same value is read and written by concurrent atomic load and atomic store operations. For the sake of real-time audio processing, which needs to be non-blocking and blazingly fast, we can utilize the &lt;code&gt;std:memory_order_acquire/release&lt;/code&gt; mechanism to guarantee concurrent reads and writes produce and consume the same value, which is incredibly important for processing real-time parameter updates which are expected to happen accurately and consistently. Let&amp;rsquo;s take a look at an example:&lt;/p&gt;
+&lt;h3 id=&#34;a-concise-example&#34;&gt;A Concise Example&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;#include &amp;lt;atomic&amp;gt;
+
+// Shared atomic parameter
+std::atomic&amp;lt;float&amp;gt; gain {1.f};
+
+// Control thread: Updating the gain value
+void updateGain(float newGain) 
+{
+    gain.store(newGain, std::memory_order_release);
+}
+
+// Audio thread: Reading the gain safely
+float processAudio() 
+{
+    return gain.load(std::memory_order_acquire); // Always sees the latest update
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In the example above, we have a function &lt;code&gt;updateGain(float)&lt;/code&gt; which is expected to be called from our user interface. The user interface exists on a different thread than our high-priority real-time processing thread. Our real-time processing thread calls &lt;code&gt;processAudio()&lt;/code&gt; which reads the value of our &lt;code&gt;std::atomic&amp;lt;float&amp;gt; gain&lt;/code&gt; variable. Because the real-time thread is happening &lt;em&gt;very quickly&lt;/em&gt;, it&amp;rsquo;s likely that &lt;code&gt;gain.load()&lt;/code&gt; and &lt;code&gt;gain.store()&lt;/code&gt; will be called concurrently. By utilizing &lt;code&gt;std::memory_order_release&lt;/code&gt; while calling &lt;code&gt;gain.store()&lt;/code&gt;, and &lt;code&gt;std::memory_order_acquire&lt;/code&gt; while calling &lt;code&gt;updateGain()&lt;/code&gt; from the user interface, our application will guarantee that the value seen by the &lt;code&gt;load()&lt;/code&gt; operation is the same value provided to the &lt;code&gt;store()&lt;/code&gt; operation. Modern compilers may offer ordering guarantees by way of the default memory ordering flag, but at the added cost of the overhead of the global memory order (all &lt;em&gt;all&lt;/em&gt; atomics being synchronized).&lt;/p&gt;
+&lt;p&gt;It is also worth mentioning that alternate memory ordering options exist such as &lt;code&gt;std::memory_order_relaxed&lt;/code&gt; which offers &lt;em&gt;no&lt;/em&gt; guarantees of concurrency between atomics reads and writes (only atomicity is guaranteed), &lt;code&gt;std::memory_order_acq_rel&lt;/code&gt; which combines acquire and release semantics into a single operation for atomic read-modify-write operations such as variants of &lt;code&gt;std::atomic::fetch()&lt;/code&gt; and &lt;code&gt;std::atomic::exchange()&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;in-closing&#34;&gt;In Closing&lt;/h3&gt;
+&lt;p&gt;By utilizing &lt;code&gt;std::memory_order_release&lt;/code&gt; and &lt;code&gt;std::memory_order_acquire&lt;/code&gt;, developers can ensure safe, low-latency data synchronization between threads without the unnecessary synchronization overhead of the default memory ordering flag &lt;code&gt;std:memory_order_seq_cst&lt;/code&gt;. The &lt;code&gt;std::memory_order_release&lt;/code&gt; and &lt;code&gt;std::memory_order_acquire&lt;/code&gt; memory orderings allow for efficient one-way data transfer, ensuring that atomic values being read and written concurrently read the same value being stored.&lt;/p&gt;
+&lt;p&gt;Understanding and applying the right memory ordering strategy can make a significant impact on the performance of our real-time processes. By incorporating the strategy described in this article, developers can improve performance without sacrificing correctness, guaranteeing non-blocking high performance multi-threaded audio processing code.&lt;/p&gt;
+&lt;h4 id=&#34;additional-links&#34;&gt;Additional Links&lt;/h4&gt;
+&lt;p&gt;&lt;a href=&#34;https://en.cppreference.com/w/cpp/atomic/memory_order&#34;&gt;https://en.cppreference.com/w/cpp/atomic/memory_order&lt;/a&gt;
+&lt;a href=&#34;https://www.sobyte.net/post/2022-06/cpp-memory-order/&#34;&gt;https://www.sobyte.net/post/2022-06/cpp-memory-order/&lt;/a&gt;
+&lt;a href=&#34;https://leanpub.com/concurrencywithmodernc&#34;&gt;https://leanpub.com/concurrencywithmodernc&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Adventures in Dithering</title>
       <link>https://www.bruce.audio/post/2022/05/26/dithering/</link>
